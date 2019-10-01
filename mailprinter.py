@@ -48,7 +48,7 @@ while True:
             fileName = part.get_filename()
             if bool(fileName):
                 if '.pdf' in fileName: 
-                    printName=str(random.randrange(5,2**12))
+                    printName=str(random.randrange(5,2**128))
                     filePath = os.path.join(config.custom_temp, printName)
                     if not os.path.isfile(filePath) :
                         fp = open(filePath, 'wb')
