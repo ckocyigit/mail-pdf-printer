@@ -18,7 +18,6 @@ while True:
 
     mail.select('INBOX')
 
-
     #Getting all Email-IDs and store it in data
     type, data = mail.search(None, 'UNSEEN')
     mail_ids = data[0]
@@ -41,13 +40,16 @@ while True:
         for part in email_message.walk():
             fileName = part.get_filename()
             if bool(fileName):
-                printName=str(random.randrange(5,2**12))
-                filePath = os.path.join(config.custom_temp, printName)
-                if not os.path.isfile(filePath) :
-                    fp = open(filePath, 'wb')
-                    fp.write(part.get_payload(decode=True))
-                    fp.close()
-                    print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
-                    message='E-Mail title: {subject}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date)
-                    os.system('lpr -P '+config.printer_name+' <<< "'+message+'"')
-                    os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+                if '.pdf' in fileName: 
+                    printName=str(random.randrange(5,2**12))
+                    filePath = os.path.join(config.custom_temp, printName)
+                    if not os.path.isfile(filePath) :
+                        fp = open(filePath, 'wb')
+                        fp.write(part.get_payload(decode=True))
+                        fp.close()
+                        print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
+                        message='E-Mail title: {subject}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date)
+                        os.system('lpr -P '+config.printer_name+' <<< "'+message+'"')
+                        os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+                else:
+                    print('File '+str(fileName)+' is not a pdf')
