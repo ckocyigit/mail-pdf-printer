@@ -5,12 +5,14 @@ import email
 import getpass
 import random
 import time
-import config
+import data.config as config
+
+#config.email_pass=getpass.getpass(prompt='Password: ', stream=None) 
 
 while True:
     time.sleep(5)
     print('Checking...')
-    mail = imaplib.IMAP4(config.email_server,config.email_port)
+    mail = imaplib.IMAP4(config.email_server)
     mail.starttls()
     mail.login(config.email_user, config.email_pass)
 
@@ -33,8 +35,7 @@ while True:
         raw_email_string = raw_email.decode('utf-8')
         email_message = email.message_from_string(raw_email_string)
         
-        print('\t'+str(email_message.get_all('subject')))
-        
+        print('\t'+str(email_message.get_all('subject'))) 
         subject=str(email_message.get_all('subject')[0])
         date=str(email_message.get_all('date')[0])
         for part in email_message.walk():
@@ -47,4 +48,6 @@ while True:
                     fp.write(part.get_payload(decode=True))
                     fp.close()
                     print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
+                    message='E-Mail title: {subject}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date)
+                    os.system('lpr -P '+config.printer_name+' <<< "'+message+'"')
                     os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
