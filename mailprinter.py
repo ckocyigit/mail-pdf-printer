@@ -31,7 +31,14 @@ while True:
     for num in data[0].split():
         typ, data = mail.fetch(num, '(RFC822)' )
         raw_email = data[0][1]# converts byte literal to string removing b''
-        raw_email_string = raw_email.decode('utf-8')
+
+        raw_email_string = ''
+        
+        try:
+            raw_email_string=raw_email.decode('utf-8')
+        except:
+            raw_email_string=raw_email.decode('latin-1')
+
         email_message = email.message_from_string(raw_email_string)
         
         print('\t'+str(email_message.get_all('subject'))) 
