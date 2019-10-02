@@ -5,9 +5,11 @@ import email
 import getpass
 import random
 import time
+import sys
 import data.config as config
 
-#config.email_pass=getpass.getpass(prompt='Password: ', stream=None) 
+if len(sys.argv)>0:
+    config.email_pass=getpass.getpass(prompt='Password: ', stream=None) 
 
 while True:
     time.sleep(5)
@@ -57,6 +59,12 @@ while True:
                         print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
                         message='E-Mail title: {subject}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date)
                         os.system('lpr -P '+config.printer_name+' <<< "'+message+'"')
-                        os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+                        if not subject.split()[0].startswith('count:'):
+                            os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+                        else:
+                            ct=str(subject.split()[0][6:])
+                            os.system('lpr -#'+ct+' -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+
+
                 else:
                     print('File '+str(fileName)+' is not a pdf')
