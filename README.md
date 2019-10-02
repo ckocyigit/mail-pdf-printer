@@ -1,6 +1,9 @@
 # mail-pdf-printer
 This script is used to print all new mails with PDF appending from an email account. Files will be printed two sided by default.
 
+[![Docker](http://dockeri.co/image/fius/mail-pdf-printer)](https://hub.docker.com/r/fius/mail-pdf-printer)
+
+
 ### Config
 The main script uses a `config.py`. This file needs to be in a subdirectory from the main script called `data/`. In this file these 5 variables needs to be declared:
 
