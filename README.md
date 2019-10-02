@@ -14,6 +14,8 @@ The main script uses a `config.py`. This file needs to be in a subdirectory from
 
 `custom_temp='<A directory where the downloaded files can be cached>'`
 
+The file can be created by the `setup.py` script.
+
 ### Docker
 Mount the `config.py` in the container directory: `/skript/data` and start with command:
 
