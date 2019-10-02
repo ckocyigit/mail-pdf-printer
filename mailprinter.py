@@ -8,12 +8,18 @@ import time
 import sys
 import data.config as config
 
+isDebug=False
+
 if len(sys.argv)>0:
+    isDebug=True
+
+if isDebug:
     config.email_pass=getpass.getpass(prompt='Password: ', stream=None) 
 
 while True:
     time.sleep(5)
-    print('Checking...')
+    if isDebug:
+        print('Checking...')
     mail = imaplib.IMAP4(config.email_server)
     mail.starttls()
     mail.login(config.email_user, config.email_pass)
@@ -28,7 +34,8 @@ while True:
     if len(data[0].split())>0:
         print('New Mails:')
     else:
-        print('No new Mails')
+        if isDebug:
+            print('No new Mails')
 
     for num in data[0].split():
         typ, data = mail.fetch(num, '(RFC822)' )
