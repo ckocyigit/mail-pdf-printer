@@ -6,7 +6,6 @@ import getpass
 import random
 import time
 import sys
-import data.config as config
 
 CONFIG_KEYS = ('email_user', 'email_pass', 'email_server', 'printer_name', 'custom_temp', 'debug')
 
