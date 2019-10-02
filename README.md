@@ -20,6 +20,6 @@ The main script uses a `config.py`. This file needs to be in a subdirectory from
 The file can be created by the `setup.py` script.
 
 ### Docker
-Mount the `config.py` in the container directory: `/skript/data` and start with command:
+Mount the `config.py` in the container directory: `/script/data` and start with command:
 
-`sudo docker run -i -t -v <Path to config.py>:/skript/data <Container name>`
+`sudo docker run -i -t -v <Path to config.py>:/script/data <Container name>`
