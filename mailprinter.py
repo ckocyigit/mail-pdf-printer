@@ -20,8 +20,7 @@ while True:
     time.sleep(5)
     if isDebug:
         print('Checking...')
-    mail = imaplib.IMAP4(config.email_server)
-    mail.starttls()
+    mail = imaplib.IMAP4_SSL(config.email_server)
     mail.login(config.email_user, config.email_pass)
 
     mail.select('INBOX')
