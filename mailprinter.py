@@ -46,6 +46,7 @@ while True:
         print('\t'+str(email_message.get_all('subject'))) 
         subject=str(email_message.get_all('subject')[0])
         date=str(email_message.get_all('date')[0])
+        fromMail=str(email_message.get_all('from')[0])
         for part in email_message.walk():
             fileName = part.get_filename()
             if bool(fileName):
@@ -57,7 +58,7 @@ while True:
                         fp.write(part.get_payload(decode=True))
                         fp.close()
                         print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
-                        message='E-Mail title: {subject}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date)
+                        message='E-Mail title: {subject}\nFrom:{fromMail}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date,fromMail=fromMail)
                         os.system('lpr -P '+config.printer_name+' <<< "'+message+'"')
                         if not subject.split()[0].startswith('count:'):
                             os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)

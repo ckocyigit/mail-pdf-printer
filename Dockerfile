@@ -1,5 +1,5 @@
 FROM python:3.6-alpine
 
-ADD . /skript
+ADD . /script
 
-CMD python /skript/mailprinter.py
+CMD python /script/mailprinter.py
