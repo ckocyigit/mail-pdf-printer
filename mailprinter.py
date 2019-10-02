@@ -8,20 +8,37 @@ import time
 import sys
 import data.config as config
 
-isDebug=False
+CONFIG_KEYS = ('email_user', 'email_pass', 'email_server', 'printer_name', 'custom_temp', 'debug')
 
-if len(sys.argv)>0:
-    isDebug=True
+config = dict()
 
-if isDebug:
-    config.email_pass=getpass.getpass(prompt='Password: ', stream=None) 
+for var in CONFIG_KEYS:
+    config[var] = None
+
+config['custom_temp'] = "/tmp/"
+
+try:
+    import data.config as configFile
+    for var in CONFIG_KEYS:
+        config[var] = getattr(configFile, var, config[var])
+except ImportError:
+    pass
+
+for var in CONFIG_KEYS:
+    config[var] = os.environ.get(var.upper(), config[var])
+
+if len(sys.argv)>1:
+    config['debug'] = "True"
+
+if config['email_pass'] is None:
+    config['email_pass'] = getpass.getpass(prompt='Password: ', stream=None)
 
 while True:
     time.sleep(5)
-    if isDebug:
+    if config['debug'] == "True":
         print('Checking...')
-    mail = imaplib.IMAP4_SSL(config.email_server)
-    mail.login(config.email_user, config.email_pass)
+    mail = imaplib.IMAP4_SSL(config['email_server'])
+    mail.login(config['email_user'], config['email_pass'])
 
     mail.select('INBOX')
 
@@ -33,7 +50,7 @@ while True:
     if len(data[0].split())>0:
         print('New Mails:')
     else:
-        if isDebug:
+        if config['debug'] == "True":
             print('No new Mails')
 
     for num in data[0].split():
@@ -58,7 +75,7 @@ while True:
             if bool(fileName):
                 if '.pdf' in fileName: 
                     printName=str(random.randrange(5,2**128))+'.pdf'
-                    filePath = os.path.join(config.custom_temp, printName)
+                    filePath = os.path.join(config['custom_temp'], printName)
                     if not os.path.isfile(filePath) :
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
@@ -66,12 +83,12 @@ while True:
                         print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
                         message='E-Mail title: {subject}\nFrom:{fromMail}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date,fromMail=fromMail)
                         print(message)
-                        os.system('lpr -P '+config.printer_name+' <<< "'+message+'"')
+                        os.system('lpr -P '+ config['printer_name'] +' <<< "'+message+'"')
                         if not subject.split()[0].startswith('count:'):
-                            os.system('lpr -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+                            os.system('lpr -P '+ config['printer_name'] +' -o sides=two-sided-long-edge '+filePath)
                         else:
                             ct=str(subject.split()[0][6:])
-                            os.system('lpr -#'+ct+' -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
+                            os.system('lpr -#'+ct+' -P '+ config['printer_name'] +' -o sides=two-sided-long-edge '+filePath)
                         os.system('rm '+ filePath)
 
                 else:
