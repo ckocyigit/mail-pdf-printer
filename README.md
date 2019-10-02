@@ -2,7 +2,7 @@
 This script is used to print all new mails with PDF appending from an email account. Files will be printed two sided by default.
 
 ### Config
-The main script uses a `config.py`. This file need to be in the same directory as main script. In this file these 5 variables needs to be declared:
+The main script uses a `config.py`. This file needs to be in a subdirectory from the main script called `data/`. In this file these 5 variables needs to be declared:
 
 `email_user = '<Username of mailaccount>'`
 
