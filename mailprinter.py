@@ -64,7 +64,7 @@ while True:
                         else:
                             ct=str(subject.split()[0][6:])
                             os.system('lpr -#'+ct+' -P '+config.printer_name+' -o sides=two-sided-long-edge '+filePath)
-
+                        os.system('rm '+ filePath)
 
                 else:
                     print('File '+str(fileName)+' is not a pdf')
