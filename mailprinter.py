@@ -90,7 +90,8 @@ while True:
                         message='E-Mail title: {subject}\nFrom:{fromMail}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date,fromMail=fromMail)
                         print(message)
                         doCheckedPostRequest("http://led-ceiling.fgnet?printer")
-                        os.system('echo "'+message+'" | lpr -P '+ config['printer_name'])
+                        if '[Ak-Bib]' in subject:
+                            os.system('echo "'+message+'" | lpr -P '+ config['printer_name'])
                         if not subject.split()[0].startswith('count:'):
                             os.system('lpr -P '+ config['printer_name'] +' -o sides=two-sided-long-edge '+filePath)
                         else:
