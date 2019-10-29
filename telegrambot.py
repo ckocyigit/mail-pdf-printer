@@ -14,7 +14,7 @@ import requests
 
 updater = Updater(token=telegramapi.telegramToken, use_context=True)
 dispatcher = updater.dispatcher
-users=[]
+users=None
 
 def saveUser():
     global users
@@ -32,9 +32,12 @@ def doCheckedPostRequest(url):
     except Exception as e:
         print("Error in post: ", e)
 
-def printFile(file):
+def printFile(userID,file):
     doCheckedPostRequest("http://led-ceiling.fgnet?printer")
-    os.system('lpr  -o sides=two-sided-long-edge '+file)
+    if users[userID]:
+        os.system('lpr -o sides=two-sided-long-edge '+file)
+    else:
+        os.system('lpr -o sides=one-sided '+file)
     os.system('rm '+file)
 
 def build_menu(buttons,
@@ -60,41 +63,55 @@ def start(update, context):
     context.bot.send_message(chat_id=telegramapi.adminChatID,text='Darf '+update.effective_chat.first_name+' admin sein?', reply_markup=reply_markup)
 
 def admin_handle(update, cbContext):
-    button=update.callback_query.data
+    button=str(update.callback_query.data)
     
     query = update.callback_query
 
-    
-
-    if button is not "none":
-        users.append(int(button))
+    if button != "none":
+        users[int(button)]=True
         saveUser()
         query.edit_message_text(text="User authorized")
+        cbContext.bot.send_message(chat_id=int(button), text="You can now print")
     else:
         query.edit_message_text(text="Request declined")
 
 def checkAdmin(id):
-    return id in users
+    return str(id) in users
 
 def photo(update, cbContext):
-    file_id = update.message.photo[-1].file_id
-    newFile = cbContext.bot.getFile(file_id)
-    newFile.download('temp')
-    cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
     isAdmin=checkAdmin(update.effective_chat.id)
     if isAdmin:
-        printFile('temp')
+        file_id = update.message.photo[-1].file_id
+        newFile = cbContext.bot.getFile(file_id)
+        newFile.download('temp')
+        cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
+    
+        printFile(update.message.chat_id,'temp')
 
 def document(update, cbContext):
-    file_id = update.message.document.file_id
-    newFile = cbContext.bot.getFile(file_id)
-    newFile.download('temp')
-    cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
     if checkAdmin(update.effective_chat.id):
-        printFile('temp')
+        file_id = update.message.document.file_id
+        newFile = cbContext.bot.getFile(file_id)
+        newFile.download('temp')
+        cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
+    
+        printFile(update.message.chat_id,'temp')
+
+def makeOneSided(update, cbContext):
+    isAdmin=checkAdmin(update.effective_chat.id)
+    if isAdmin:
+        users[str(update.effective_chat.id)]=False
+
+def makeTwoSided(update, cbContext):
+    isAdmin=checkAdmin(update.effective_chat.id)
+    if isAdmin:
+        users[str(update.effective_chat.id)]=True
 
 pdf_handler = MessageHandler(Filters.photo, photo)
 start_handler = CommandHandler('start', start)
+oSided = CommandHandler('oneSided', makeOneSided)
+tSided = CommandHandler('twoSided', makeTwoSided)
+
 doc_handler = MessageHandler(Filters.document, document)
 admin_handler=CallbackQueryHandler(admin_handle)
 
@@ -102,6 +119,8 @@ dispatcher.add_handler(pdf_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(doc_handler)
 dispatcher.add_handler(admin_handler)
+dispatcher.add_handler(oSided)
+dispatcher.add_handler(tSided)
 
 loadUser()
 
