@@ -44,6 +44,7 @@ def start(update, context):
     message="Hi, i'am the FIUS Printer.\nPlease send me the files you want to print\n"
     message+="Your chat id is: "+str(update.effective_chat.id)
     context.bot.send_message(chat_id=update.effective_chat.id, text=message)
+    context.bot.send_message(chat_id=update.effective_chat.id, text="An authorization request has been sent")
     button_list = [
     InlineKeyboardButton("Ja", callback_data=str(update.effective_chat.id)),
     InlineKeyboardButton("Nein", callback_data="none")]
