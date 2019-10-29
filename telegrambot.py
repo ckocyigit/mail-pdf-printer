@@ -34,7 +34,7 @@ def doCheckedPostRequest(url):
 
 def printFile(userID,file):
     doCheckedPostRequest("http://led-ceiling.fgnet?printer")
-    if users[userID]:
+    if users[str(userID)]:
         os.system('lpr -o sides=two-sided-long-edge '+file)
     else:
         os.system('lpr -o sides=one-sided '+file)
@@ -84,7 +84,7 @@ def photo(update, cbContext):
         file_id = update.message.photo[-1].file_id
         newFile = cbContext.bot.getFile(file_id)
         newFile.download('temp')
-        cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
+        cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="Picture will be printed")
     
         printFile(update.message.chat_id,'temp')
 
@@ -93,7 +93,7 @@ def document(update, cbContext):
         file_id = update.message.document.file_id
         newFile = cbContext.bot.getFile(file_id)
         newFile.download('temp')
-        cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
+        cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="File will be printed")
     
         printFile(update.message.chat_id,'temp')
 
