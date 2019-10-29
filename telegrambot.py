@@ -53,9 +53,17 @@ def start(update, context):
 
 def admin_handle(update, cbContext):
     button=update.callback_query.data
+    
+    query = update.callback_query
+
+    
+
     if button is not "none":
-         users.append(int(button))
-         saveUser()
+        users.append(int(button))
+        saveUser()
+        query.edit_message_text(text="User authorized")
+    else:
+        query.edit_message_text(text="Request declined")
 
 def checkAdmin(id):
     return id in users
