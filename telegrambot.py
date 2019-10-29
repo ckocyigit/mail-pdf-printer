@@ -10,6 +10,7 @@ from telegram import utils
 import telegramapi
 import os
 import json
+import requests
 
 updater = Updater(token=telegramapi.telegramToken, use_context=True)
 dispatcher = updater.dispatcher
@@ -25,7 +26,14 @@ def loadUser():
     with open('user.json') as json_file:
         users = json.load(json_file)
 
+def doCheckedPostRequest(url):
+    try:
+        requests.post(url)
+    except Exception as e:
+        print("Error in post: ", e)
+
 def printFile(file):
+    doCheckedPostRequest("http://led-ceiling.fgnet?printer")
     os.system('lpr  -o sides=two-sided-long-edge '+file)
     os.system('rm '+file)
 
