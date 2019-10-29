@@ -6,7 +6,7 @@ import telegramapi
 import os
 import json
 
-updater = Updater(token=telegramToken, use_context=True)
+updater = Updater(token=telegramapi.telegramToken, use_context=True)
 dispatcher = updater.dispatcher
 users=[]
 
