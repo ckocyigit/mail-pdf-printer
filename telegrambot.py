@@ -54,7 +54,7 @@ def start(update, context):
 def admin_handle(update, cbContext):
     button=update.callback_query.data
     if button is not "none":
-         users.append(button)
+         users.append(int(button))
          saveUser()
 
 def checkAdmin(id):
@@ -65,7 +65,8 @@ def photo(update, cbContext):
     newFile = cbContext.bot.getFile(file_id)
     newFile.download('temp')
     cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="download successfull")
-    if checkAdmin(update.effective_chat.id):
+    isAdmin=checkAdmin(update.effective_chat.id)
+    if isAdmin:
         printFile('temp')
 
 def document(update, cbContext):
