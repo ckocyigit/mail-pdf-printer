@@ -33,6 +33,7 @@ def doCheckedPostRequest(url):
         print("Error in post: ", e)
 
 def printFile(userID,file):
+    global users
     doCheckedPostRequest("http://led-ceiling.fgnet?printer")
     if users[str(userID)]:
         os.system('lpr -o sides=two-sided-long-edge '+file)
@@ -63,6 +64,7 @@ def start(update, context):
     context.bot.send_message(chat_id=telegramapi.adminChatID,text='Darf '+update.effective_chat.first_name+' admin sein?', reply_markup=reply_markup)
 
 def admin_handle(update, cbContext):
+    global users
     button=str(update.callback_query.data)
     
     query = update.callback_query
@@ -76,6 +78,7 @@ def admin_handle(update, cbContext):
         query.edit_message_text(text="Request declined")
 
 def checkAdmin(id):
+    global users
     return str(id) in users
 
 def photo(update, cbContext):
@@ -98,11 +101,13 @@ def document(update, cbContext):
         printFile(update.message.chat_id,'temp')
 
 def makeOneSided(update, cbContext):
+    global users
     isAdmin=checkAdmin(update.effective_chat.id)
     if isAdmin:
         users[str(update.effective_chat.id)]=False
 
 def makeTwoSided(update, cbContext):
+    global users
     isAdmin=checkAdmin(update.effective_chat.id)
     if isAdmin:
         users[str(update.effective_chat.id)]=True
