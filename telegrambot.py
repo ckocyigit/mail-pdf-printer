@@ -14,17 +14,21 @@ import requests
 
 updater = Updater(token=telegramapi.telegramToken, use_context=True)
 dispatcher = updater.dispatcher
-users=None
+users=dict()
+
+def loadUser():
+    global users
+    try:
+        with open('user.json') as json_file:
+            users = json.load(json_file)
+    except FileNotFoundError:
+        saveUser()
 
 def saveUser():
     global users
     with open('user.json', 'w') as f:
         json.dump(users, f)
-
-def loadUser():
-    global users
-    with open('user.json') as json_file:
-        users = json.load(json_file)
+    loadUser()
 
 def doCheckedPostRequest(url):
     try:
