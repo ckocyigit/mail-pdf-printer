@@ -41,7 +41,7 @@ def doCheckedPostRequest(url):
 def printFile(userID,file,lprCmd=None):
     global users
     doCheckedPostRequest("http://led-ceiling.fgnet?printer")
-    if lprCmd is not None:
+    if lprCmd is None:
         if users[str(userID)]:
             #os.system('lpr -o sides=two-sided-long-edge '+file)
             lprCommand='lpr -o sides=two-sided-long-edge '+file
