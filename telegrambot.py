@@ -11,6 +11,8 @@ import telegramapi
 import os
 import json
 import requests
+import subprocess
+import shlex
 
 updater = Updater(token=telegramapi.telegramToken, use_context=True)
 dispatcher = updater.dispatcher
@@ -36,13 +38,21 @@ def doCheckedPostRequest(url):
     except Exception as e:
         print("Error in post: ", e)
 
-def printFile(userID,file):
+def printFile(userID,file,lprCmd=None):
     global users
     doCheckedPostRequest("http://led-ceiling.fgnet?printer")
-    if users[str(userID)]:
-        os.system('lpr -o sides=two-sided-long-edge '+file)
+    if lprCmd is not None:
+        if users[str(userID)]:
+            #os.system('lpr -o sides=two-sided-long-edge '+file)
+            lprCommand='lpr -o sides=two-sided-long-edge '+file
+            subprocess.run(shlex.split(lprCommand))
+        else:
+            #os.system('lpr -o sides=one-sided '+file)
+            lprCommand='lpr -o sides=one-sided '+file
+            subprocess.run(shlex.split(lprCommand))
     else:
-        os.system('lpr -o sides=one-sided '+file)
+        lprCommand='lpr '+str(lprCmd)+' '+file
+        subprocess.run(shlex.split(lprCommand))
     os.system('rm '+file)
 
 def build_menu(buttons,
@@ -93,7 +103,7 @@ def photo(update, cbContext):
         newFile.download('temp')
         cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="Picture will be printed")
     
-        printFile(update.message.chat_id,'temp')
+        printFile(update.message.chat_id,'temp',lprCmd=update.effective_message.caption)
 
 def document(update, cbContext):
     if checkAdmin(update.effective_chat.id):
@@ -102,7 +112,7 @@ def document(update, cbContext):
         newFile.download('temp')
         cbContext.bot.sendMessage(chat_id=update.message.chat_id, text="File will be printed")
     
-        printFile(update.message.chat_id,'temp')
+        printFile(update.message.chat_id,'temp',lprCmd=update.effective_message.caption)
 
 def makeOneSided(update, cbContext):
     global users
@@ -118,8 +128,8 @@ def makeTwoSided(update, cbContext):
 
 pdf_handler = MessageHandler(Filters.photo, photo)
 start_handler = CommandHandler('start', start)
-oSided = CommandHandler('oneSided', makeOneSided)
-tSided = CommandHandler('twoSided', makeTwoSided)
+oSided = CommandHandler('onesided', makeOneSided)
+tSided = CommandHandler('twosided', makeTwoSided)
 
 doc_handler = MessageHandler(Filters.document, document)
 admin_handler=CallbackQueryHandler(admin_handle)
