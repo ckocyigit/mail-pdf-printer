@@ -34,13 +34,13 @@ def saveUser():
 
 def doCheckedPostRequest(url):
     try:
-        requests.post(url)
+        requests.post(url,json={'color':0.6})
     except Exception as e:
         print("Error in post: ", e)
 
 def printFile(userID,file,lprCmd=None):
     global users
-    doCheckedPostRequest("http://led-ceiling.fgnet?printer")
+    doCheckedPostRequest("http://fs-ceiling:5000/printer")
     if lprCmd is None:
         if users[str(userID)]:
             #os.system('lpr -o sides=two-sided-long-edge '+file)
