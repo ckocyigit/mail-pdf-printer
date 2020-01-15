@@ -7,14 +7,14 @@ from telegram import InlineKeyboardButton
 from telegram import InlineKeyboardMarkup
 from telegram import utils
 
-import telegramapi
+import config
 import os
 import json
 import requests
 import subprocess
 import shlex
 
-updater = Updater(token=telegramapi.telegramToken, use_context=True)
+updater = Updater(token=config.telegramToken, use_context=True)
 dispatcher = updater.dispatcher
 users=dict()
 
@@ -75,7 +75,7 @@ def start(update, context):
     InlineKeyboardButton("Ja", callback_data=str(update.effective_chat.id)),
     InlineKeyboardButton("Nein", callback_data="none")]
     reply_markup = InlineKeyboardMarkup(build_menu(button_list, n_cols=2))
-    context.bot.send_message(chat_id=telegramapi.adminChatID,text='Darf '+update.effective_chat.first_name+' admin sein?', reply_markup=reply_markup)
+    context.bot.send_message(chat_id=config.adminChatID,text='Darf '+update.effective_chat.first_name+' admin sein?', reply_markup=reply_markup)
 
 def admin_handle(update, cbContext):
     global users
@@ -126,6 +126,20 @@ def makeTwoSided(update, cbContext):
     if isAdmin:
         users[str(update.effective_chat.id)]=True
 
+def printAusleih(update, cbContext):
+    isAdmin=checkAdmin(update.effective_chat.id)
+    if isAdmin:
+        splitted = update.message.text.split()
+        count=1
+        if(len(splitted)>1):
+            count=splitted[1]
+        
+        if splitted[0]=="printVrFormular":
+            printFile(update.effective_chat.id,config.vrFormular,"# "+count)
+        elif splitted[0]=="printVrListe":
+            printFile(update.effective_chat.id,config.vrListe,"# "+count)
+
+
 pdf_handler = MessageHandler(Filters.photo, photo)
 start_handler = CommandHandler('start', start)
 oSided = CommandHandler('onesided', makeOneSided)
@@ -140,6 +154,8 @@ dispatcher.add_handler(doc_handler)
 dispatcher.add_handler(admin_handler)
 dispatcher.add_handler(oSided)
 dispatcher.add_handler(tSided)
+dispatcher.add_handler(CommandHandler('printVrFormular', printAusleih))
+dispatcher.add_handler(CommandHandler('printVrListe', printAusleih))
 
 loadUser()
 
