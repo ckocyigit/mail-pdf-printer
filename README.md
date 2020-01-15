@@ -30,3 +30,15 @@ Environment variables can also be used to configure the above settings. Use the 
 Mount the `config.py` in the container directory: `/script/data` and start with command:
 
 `sudo docker run -i -t -v <Path to config.py>:/script/data <Container name>`
+
+# telegram-printer
+### Setup
+The telegrambot requires the python-telegram-bot library. After install this
+just put a config.py in this directory containing there variables:
+```
+telegramToken=""
+adminChatID=
+vrFormular=""
+vrListe=""
+```
+and run the telegrambot.py file
