@@ -89,7 +89,7 @@ while True:
                         print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
                         message='E-Mail title: {subject}\nFrom:{fromMail}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date,fromMail=fromMail)
                         print(message)
-                        doCheckedPostRequest("http://fs-ceiling:5000/printer")
+                        doCheckedPostRequest("http://192.168.178.60:80/WebServices/Device")
                         if '[Ak-Bib]' in subject:
                             os.system('echo "'+message+'" | lpr -P '+ config['printer_name'])
                         if not subject.split()[0].startswith('count:'):
