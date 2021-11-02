@@ -8,13 +8,16 @@ import time
 import sys
 import requests
 
+def print_to_stdout(*a):
+    print(*a, file = sys.stdout)
+
 def doCheckedPostRequest(url):
     try:
         requests.post(url,json={'color':0})
     except Exception as e:
-        print("Error in post: ", e)
+        print_to_stdout("Error in post: ", e)
 
-CONFIG_KEYS = ('email_user', 'email_pass', 'email_server', 'printer_name', 'custom_temp', 'debug')
+CONFIG_KEYS = ('email_user', 'email_pass', 'email_server', 'printer_name', 'custom_temp', 'debug', 'printer_url')
 
 config = dict()
 
@@ -42,7 +45,7 @@ if config['email_pass'] is None:
 while True:
     time.sleep(5)
     if config['debug'] == "True":
-        print('Checking...')
+        print_to_stdout('Checking...')
     mail = imaplib.IMAP4_SSL(config['email_server'])
     mail.login(config['email_user'], config['email_pass'])
 
@@ -54,10 +57,10 @@ while True:
     id_list = mail_ids.split()
 
     if len(data[0].split())>0:
-        print('New Mails:')
+        print_to_stdout('New Mails:')
     else:
         if config['debug'] == "True":
-            print('No new Mails')
+            print_to_stdout('No new Mails')
 
     for num in data[0].split():
         typ, data = mail.fetch(num, '(RFC822)' )
@@ -72,7 +75,7 @@ while True:
 
         email_message = email.message_from_string(raw_email_string)
         
-        print('\t'+str(email_message.get_all('subject'))) 
+        print_to_stdout('\t'+str(email_message.get_all('subject'))) 
         subject=str(email_message.get_all('subject')[0])
         date=str(email_message.get_all('date')[0])
         fromMail=str(email_message.get_all('from')[0]).replace('"', "").replace("'","")
@@ -86,10 +89,10 @@ while True:
                         fp = open(filePath, 'wb')
                         fp.write(part.get_payload(decode=True))
                         fp.close()
-                        print('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
+                        print_to_stdout('Downloaded "{file}" from email titled "{subject}" on {date}.'.format(file=fileName, subject=subject,date=date))
                         message='E-Mail title: {subject}\nFrom:{fromMail}\nReceived on: {date}\nFilename: {file} '.format(file=fileName, subject=subject,date=date,fromMail=fromMail)
-                        print(message)
-                        doCheckedPostRequest("http://192.168.178.60:80/WebServices/Device")
+                        print_to_stdout(message)
+                        doCheckedPostRequest(config['printer_url'])
                         if '[Ak-Bib]' in subject:
                             os.system('echo "'+message+'" | lpr -P '+ config['printer_name'])
                         if not subject.split()[0].startswith('count:'):
@@ -100,4 +103,4 @@ while True:
                         os.system('rm '+ filePath)
 
                 else:
-                    print('File '+str(fileName)+' is not a pdf')
+                    print_to_stdout('File '+str(fileName)+' is not a pdf')
