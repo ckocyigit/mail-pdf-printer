@@ -9,7 +9,7 @@ import sys
 import requests
 
 def print_to_stdout(*a):
-    sys.stdout.write(f'*a\n')
+    sys.stdout.write(*a + '\n')
 
 def doCheckedPostRequest(url):
     try:
