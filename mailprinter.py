@@ -8,6 +8,11 @@ import time
 import sys
 import requests
 
+def addPrinterLinux(name, url)
+    os.system(f"lpadmin -p {name} -E -v ipp://{url}/ipp/print -m everywhere")
+    print_to_stdout(f"Adding Printer {name} on {url}")
+    print(f"Adding Printer {name} on {url}")
+
 def print_to_stdout(*a):
     sys.stdout.write(str(*a) + '\n')
 
@@ -48,6 +53,7 @@ if config['email_pass'] is None:
     config['email_pass'] = getpass.getpass(prompt='Password: ', stream=None)
 
 startCupsServer()
+addPrinterLinux(config['printer_name'], config['printer_url'])
     
 while True:
     time.sleep(5)
