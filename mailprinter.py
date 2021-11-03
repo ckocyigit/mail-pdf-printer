@@ -16,6 +16,11 @@ def doCheckedPostRequest(url):
         requests.post(url,json={'color':0})
     except Exception as e:
         print_to_stdout("Error in post: ", e)
+        
+def startCupsServer():
+    os.system("cupsd")
+    print_to_stdout("Started cups daemon")
+    print("Started cups daemon")
 
 CONFIG_KEYS = ('email_user', 'email_pass', 'email_server', 'printer_name', 'custom_temp', 'debug', 'printer_url')
 
@@ -42,6 +47,8 @@ if len(sys.argv)>1:
 if config['email_pass'] is None:
     config['email_pass'] = getpass.getpass(prompt='Password: ', stream=None)
 
+startCupsServer()
+    
 while True:
     time.sleep(5)
     if config['debug'] == "True":
