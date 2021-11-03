@@ -9,7 +9,7 @@ import sys
 import requests
 
 def print_to_stdout(*a):
-    sys.stdout.write(*a + '\n')
+    sys.stdout.write(str(*a) + '\n')
 
 def doCheckedPostRequest(url):
     try:
@@ -79,6 +79,8 @@ while True:
         subject=str(email_message.get_all('subject')[0])
         date=str(email_message.get_all('date')[0])
         fromMail=str(email_message.get_all('from')[0]).replace('"', "").replace("'","")
+        if len(subject) == 0:
+            subject = f"Leerer Betreff: {date}"
         for part in email_message.walk():
             fileName = part.get_filename()
             if bool(fileName):
